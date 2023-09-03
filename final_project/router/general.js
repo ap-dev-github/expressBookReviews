@@ -51,7 +51,7 @@ public_users.get('/', async (req, res) => {
 public_users.get('/isbn/:isbn', async (req, res) => {
     try {
         const isbn = req.params.isbn;
-        const book = books[isbn];
+        const book = books[isbn];//we will use axios to acces the book data if we use any data or external api but here we already have the book objet so we dont need axios async alone enough.
         if (!book) {
             return res.status(404).json({ message: "Book not found!" })
         }
