@@ -2,12 +2,32 @@ const express = require('express');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
+
+let booksarray=Object.values(books);
+
 const public_users = express.Router();
 
 
 public_users.post("/register", (req,res) => {
-   
-  return res.status(300).json({message: ""});
+    let newusername=req.body.username;
+    let newpassword=req.body.password;
+    if(!newusername || !newpassword){
+    return  res.status(400).json({message:"Invalid Input"});
+    }
+ else{
+            foundusername=users.filter((user)=>user.username===newusername)
+
+            if(foundusername.length>0){
+                return res.status(400).json({message:"Username already exist!"})
+            }
+            else{
+                users.push({username:newusername,password:newpassword});
+                
+            }
+            return res.status(200).json({message:"Registration Successful !"});
+
+
+        }
 });
 
 // Get the book list available in the shop
@@ -37,20 +57,46 @@ public_users.get('/author/:author',function (req, res) {
 
   }
   else{
-  return res.status(403).json({message: "Author name error"});
+  return res.status(400).json({message: "Invalid Input author name"});
   }
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+   const title=req.params.title;
+   if(title){
+   const foundbook=booksarray.filter((book)=> book.title===title)
+   if(foundbook.length>0){
+       res.send(foundbook);
+   }
+   else{
+      return res.status(404).json({message:"Book Not found"})
+   }
+}
+else{
+    return res.status(400).json({message:"Invalid Title Input"})
+}
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
+    const isbn=req.params.isbn;
+    if(isbn){
+        const foundbook=books[isbn];
+        if(books[isbn]){
+        res.send(foundbook["reviews"]);
+        }
+        else{
+            return res.status(404).json({message:"No book Found with  this isbn"});
+        }
+    }
+    else{
+       return res.status(400).json({message:"No isbn Provided"})
+    }
+ }
+ 
+ );
+
+
 
 module.exports.general = public_users;
