@@ -15,7 +15,7 @@ public_users.post("/register", (req,res) => {
     return  res.status(400).json({message:"Invalid Input"});
     }
  else{
-            foundusername=users.filter((user)=>user.username===newusername)
+           foundusername=users.filter((user)=>user.username===newusername)
 
             if(foundusername.length>0){
                 return res.status(400).json({message:"Username already exist!"})
